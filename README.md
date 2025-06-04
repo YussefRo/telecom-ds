@@ -61,6 +61,56 @@ la cual indica cuantos servicios tiene activo el cliente.
 
 # Graficas 📊
 
+![distribucion cancelaciones](images/distribucion_cancelaciones.png)
+![Cancelación según tipo de contrato](images/cancelacion_segun_tipo.png)
+![Cancelación según método de pago](images/cancelacion_segun_pago.png)
+![Distribución de servicios contratados](images/distribucion_servicios.png)
+![Cargos mensuales vs. cancelación](images/cargosMensualesVSCancelacion.png)
+
+Estas son algunas de las graficas que se realizan en el proyecto. 
+Podemos apreciar que menos de la mitad de clientes que hay en el dataset han cancelado su servicio, ademas de que la mayor de parte de cancelaciones han sido realizadas por clientes que tienen contratos
+de mes x mes a comparacion de los que tienen contrato de 1 o 2 años; Un punto importante es que los clientes que tienden a cancelar el servicio son aquellos que realizan de forma manual su pago a diferencia
+de los que cuentan con el servicio de cobro automatico.
+
+**La exploración de datos nos permitió detectar patrones y ajustar el preprocesamiento para mejorar la calidad del modelo.**
+
+# Preprocesamiento 🔄
+
+Para la parte del preprocesamiento vamos a unificar algunas columnas para facilitar el manejo de los datos, ademas de seleccionar un modelo para nuestro entrenamiento.
+
+Creamos una columna "Payment" donde simplicaremos los valores, actualmente tenemos 4 opciones pero dos de ellas son para hacer pagos manuales y los otras dos son opciones para pago automatico,
+por lo tanto en esta nueva columna solo pondremos dos opciones "Manual" y "Automatic"
+
+Una vez unificada esa columna procedemos a extraer en un nuevo dataframe las columnas que utilizaremos para el procesamiento del modelo, estas son las columnas que nos quedaremos:
+
+- Type
+- PaperlessBilling
+- MonthlyCharges
+- TotalCharges
+- InternetService
+- MultipleLines
+- Churn
+- SeniorityMonths
+- ContratedServices
+- payment
+
+**Hemos decidido tomar estas columnas porque consideramos que son las que aportan valor al analisis para poder seleccionar que cliente es propenso a dejar de consumir el servicio.**
+
+Una vez filtrado nuestro dataframe comenzamos a identificar las columnas binarias, las cuales contienen dos valores como "Yes" y "No" o "Manual" y "Automatic", a estas columnas unicamente 
+cambiaremos los valores por 1 y 0 implementando Label Encoding:
+
+- PaperlessBilling
+- payment
+
+Ademas identificamos las columnas que son multiclase (las que tienen mas de dos valores en su columna) para aplicar el metodo One-Hot-Encoding (OHE):
+
+- Type
+- InternetService
+- MultipleLines
+
+
+Una vez realizado el proceso anterior tambien hacemos el escalado a las columnas numericas con `StandardScaler()` 
+
 
 
 
