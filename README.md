@@ -195,11 +195,46 @@ AUC-ROC: 0.9276
 
 Curva ROC
 
+![Curva ROC](images/curca-roc.png)
 
 
 
+**Como podemos apreciar la metrica AUC-ROC esta por encima del resultado esperado, lo que nos indica que el modelo distingue bien entre clientes que cancelan y clientes que no.**
+
+**Ademas de que la exactitud del modelo (Accuracy) es del 88% con un buen balance de precisión y recall, especialmente en la clase minoritaria (clientes que cancelan)**
+
+**La curva ROC muestra un modelo fuerte y bien calibrado**
+
+# Uso del Pipeline 🚀
+
+Este proyecto sigue una arquitectura modular para garantizar la reproducibilidad y escalabilidad del análisis de datos y entrenamiento del modelo.
+
+Para ejecutar el pipeline completo, sigue estos pasos:
+
+## Estructura de Archivos 📁
+``` 
+/src/
+│── EDA.py  # Analisis exploratorio
+│── preprocessing.py    # Limpieza, transformacion de datos, seleccion del mejor modelo
+│── train_model.py       # entrenamiento del modelo
+│── evaluate.py       # Evaluacion y metricas
+│── pipeline.py       # Script maestro que ejecuta todas las etapas
+
+```
+
+## Ejecutar el pipeline 🔄
+
+Para correr todo el flujo de trabajo, simplemente usa:
+```bash
+python src/pipeline.py
+```
+
+# Dependencias 🛠
+Este proyecto requiere las siguientes librerías para su ejecución. Puedes instalarlas con:
+
+```bash
+pip install -r requirements.txt
+```
 
 
-
-  
 
