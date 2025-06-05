@@ -1,4 +1,4 @@
-# Proyecto final del bottcamp Data Scientist
+# Proyecto final del bootcamp Data Scientist
 ## Nombre del proyecto: TELECOM 🛰️
 
 Al operador de telecomunicaciones Interconnect le gustaría poder pronosticar su tasa de cancelación de clientes. Si se descubre que un usuario o usuaria planea irse, se le ofrecerán códigos 
@@ -235,6 +235,8 @@ Este proyecto requiere las siguientes librerías para su ejecución. Puedes inst
 ```bash
 pip install -r requirements.txt
 ```
+## Autor 😁
 
+Yussef Misael Rodriguez Cuevas
 
 
