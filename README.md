@@ -4,6 +4,15 @@
 Al operador de telecomunicaciones Interconnect le gustaría poder pronosticar su tasa de cancelación de clientes. Si se descubre que un usuario o usuaria planea irse, se le ofrecerán códigos 
 promocionales y opciones de planes especiales. El equipo de marketing de Interconnect ha recopilado algunos de los datos personales de sus clientes, incluyendo información sobre sus planes y contratos.
 
+Objetivos:
+
+Métrica principal: AUC-ROC.
+
+Métrica adicional: exactitud.
+
+AUC-ROC ≥ 0.88
+
+
 # Estructura del proyecto ⛓️
 - **data:** Se encuentran todos los archivos o dataframes que utilizamos para el proyecto, todos estan en formato CSV
 - **notebooks:** En este apartado se encuentra un notebook que contiene todo el proyecto en un solo archivo sin arquitectura
@@ -61,9 +70,130 @@ la cual indica cuantos servicios tiene activo el cliente.
 
 # Graficas 📊
 
+![distribucion cancelaciones](images/distribucion_cancelaciones.png)
+![Cancelación según tipo de contrato](images/cancelacion_segun_tipo.png)
+![Cancelación según método de pago](images/cancelacion_segun_pago.png)
+![Distribución de servicios contratados](images/distribucion_servicios.png)
+![Cargos mensuales vs. cancelación](images/cargosMensualesVSCancelacion.png)
+
+Estas son algunas de las graficas que se realizan en el proyecto. 
+Podemos apreciar que menos de la mitad de clientes que hay en el dataset han cancelado su servicio, ademas de que la mayor de parte de cancelaciones han sido realizadas por clientes que tienen contratos
+de mes x mes a comparacion de los que tienen contrato de 1 o 2 años; Un punto importante es que los clientes que tienden a cancelar el servicio son aquellos que realizan de forma manual su pago a diferencia
+de los que cuentan con el servicio de cobro automatico.
+
+**La exploración de datos nos permitió detectar patrones y ajustar el preprocesamiento para mejorar la calidad del modelo.**
+
+# Preprocesamiento 🔄
+
+Para la parte del preprocesamiento vamos a unificar algunas columnas para facilitar el manejo de los datos, ademas de seleccionar un modelo para nuestro entrenamiento.
+
+Creamos una columna "Payment" donde simplicaremos los valores, actualmente tenemos 4 opciones pero dos de ellas son para hacer pagos manuales y los otras dos son opciones para pago automatico,
+por lo tanto en esta nueva columna solo pondremos dos opciones "Manual" y "Automatic"
+
+Una vez unificada esa columna procedemos a extraer en un nuevo dataframe las columnas que utilizaremos para el procesamiento del modelo, estas son las columnas que nos quedaremos:
+
+- Type
+- PaperlessBilling
+- MonthlyCharges
+- TotalCharges
+- InternetService
+- MultipleLines
+- Churn
+- SeniorityMonths
+- ContratedServices
+- payment
+
+**Hemos decidido tomar estas columnas porque consideramos que son las que aportan valor al analisis para poder seleccionar que cliente es propenso a dejar de consumir el servicio.**
+
+Una vez filtrado nuestro dataframe comenzamos a identificar las columnas binarias, las cuales contienen dos valores como "Yes" y "No" o "Manual" y "Automatic", a estas columnas unicamente 
+cambiaremos los valores por 1 y 0 implementando Label Encoding:
+
+- PaperlessBilling
+- payment
+
+Ademas identificamos las columnas que son multiclase (las que tienen mas de dos valores en su columna) para aplicar el metodo One-Hot-Encoding (OHE):
+
+- Type
+- InternetService
+- MultipleLines
 
 
+Una vez realizado el proceso anterior tambien hacemos el escalado a las columnas numericas con `StandardScaler()`:
 
+- MonthlyCharges
+- TotalCharges
+- SeniorityMonths
+- ContratedServices
+
+Ahora que tenemos nuestros datos listos para el entrenamiento del modelo hacemos la separacion entre el objetivo y las caracteristicas, como objetivo solo nos quedamos la columa "Chrun" las demas columnas 
+se quedan como nuestras caracteristicas, ya despues usamos la funcion `train_test_split` donde realizaremos una separacion de 80-20 para nuestros datos de entrenamiento y prueba.
+
+Como nos hemos dado cuenta que existe un desbalanceo de clases, en nuestros datos de entrenamiento aplicaremos una tecnica llamada `SMOTE` que nos ayudara a equilibrar las clases, ya que tenemos mas clientes que no han dado de baja el servicio.
+
+Despues de arreglar el problema del desequilibrio de clases pasamos a crear un `DummyClassifier` el cual nos ayudara a tener un baseline para usarlo como punto de partida y con ayuda de el verificar si nuestros modelos que probaremos estan dando resultados convenientes.
+
+Al momento de realizar la evaluacion de distintos modelos con metrica pricipal AUR-ROC y Accuaracy utilizaremos la validacion cruzada estratificada de 5 folds `StratifiedKFold(n_splits=5, shuffle=True, random_state=12345)`.
+Estos son los modelos que probamos:
+
+- Regresion logistica `LogisticRegression` 
+- Bosque Aleatorio `RandomForestClassifier`
+- `XGBClassifier`
+
+Tras realizar la prueba el modelo que mejor nos dio respuesta fue el `XGBClassifier`, por lo tanto es que utilizamos para este proyecto.
+
+# Modelo 🤖
+
+Como ya elegimos el modelo que nos dio mejores resultados en el preprocesamiento ahora vamos a utilizar `RandomizedSearchCV` para buscar los mejores hiperparametros y aprobechar al maximo el modelo.
+
+Hiperparametros recomendados:
+
+```python
+
+model_xgb = XGBClassifier(
+    n_estimators=200,
+    max_depth=10,
+    learning_rate=0.2,
+    gamma=0,
+    colsample_bytree=0.6,
+    use_label_encoder=False,
+    eval_metric='logloss',
+    random_state=12345
+)
+
+```
+
+# Resultados 📈
+
+Una vez entrenado nuestro modelo procedemos a ver las predecciones con nuestros datos de prueba.
+
+Matriz de confucion
+
+```
+[[945  79]
+ [ 96 287]]
+```
+
+Reporte de Clasificacion
+
+```
+              precision    recall  f1-score   support
+
+           0       0.91      0.92      0.92      1024
+           1       0.78      0.75      0.77       383
+
+    accuracy                           0.88      1407
+   macro avg       0.85      0.84      0.84      1407
+weighted avg       0.87      0.88      0.87      1407
+
+```
+
+Metrica AUC-ROC
+
+```
+AUC-ROC: 0.9276
+```
+
+Curva ROC
 
 
 
