@@ -14,10 +14,34 @@ AUC-ROC ≥ 0.88
 
 
 # Estructura del proyecto ⛓️
-- **data:** Se encuentran todos los archivos o dataframes que utilizamos para el proyecto, todos estan en formato CSV
-- **notebooks:** En este apartado se encuentra un notebook que contiene todo el proyecto en un solo archivo sin arquitectura
-- **src:** En esta carpeta se encuentran los diferentes archivos ya con arquitectura, el archivo principal es el de "pipeline.py" desde ahi se manda a llamar las funciones
-- **requirements:** este archivo contiene las librerias que fueron utilizadas en el proyecto
+``` 
+TELECOM-DS
+|
+│── data   # Carpeta con los dataframes para el proyecto
+|     │── contract.csv
+|     │── internet.csv
+|     │── personal.csv
+|     │── phone.csv
+|
+|── images  # Carpeta con imagenes para mostrar en el readme.
+|
+|
+|── notebooks
+|     │── eda.ipynb   # Mismo Proyecto realizado en jupyter notebook
+|
+|── src/
+|     │── EDA.py  # Analisis exploratorio
+|     │── preprocessing.py    # Limpieza, transformacion de datos, seleccion del mejor modelo
+|     │── train_model.py       # entrenamiento del modelo
+|     │── evaluate.py       # Evaluacion y metricas
+|     │── pipeline.py       # Script maestro que ejecuta todas las etapas
+|
+|── README.md  # Descripcion del proyecto
+|── requirements.txt # Librerias utilizadas en el pryecto
+
+
+
+```
 
 # Exploracion de datos 🌐
 En este proyecto, realizamos una Exploración de Datos (EDA) para entender las características de nuestros datasets, identificar patrones y detectar posibles problemas como valores atípicos o datos faltantes.
@@ -211,20 +235,9 @@ Este proyecto sigue una arquitectura modular para garantizar la reproducibilidad
 
 Para ejecutar el pipeline completo, sigue estos pasos:
 
-## Estructura de Archivos 📁
-``` 
-/src/
-│── EDA.py  # Analisis exploratorio
-│── preprocessing.py    # Limpieza, transformacion de datos, seleccion del mejor modelo
-│── train_model.py       # entrenamiento del modelo
-│── evaluate.py       # Evaluacion y metricas
-│── pipeline.py       # Script maestro que ejecuta todas las etapas
-
-```
-
 ## Ejecutar el pipeline 🔄
 
-Para correr todo el flujo de trabajo, simplemente usa:
+Para correr todo el flujo de trabajo, simplemente crea tu entorno de desarrollo (enviroment) e instala las dependencias, despues usa:
 ```bash
 python src/pipeline.py
 ```
